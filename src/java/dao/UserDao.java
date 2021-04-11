@@ -74,7 +74,7 @@ public class UserDao extends Dao implements IUserDao {
 
     @Override
     public boolean update(User user) {
-        String q = "update users (name,surname,email,username,password) values (?,?,?,?,?) where id=?";
+        String q = "update users set name=?,surname=?,email=?,username=?,password=? where id=?";
         try {
             PreparedStatement pst = getConn().prepareStatement(q);
             pst.setString(1, user.getName());

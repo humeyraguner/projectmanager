@@ -61,6 +61,17 @@ public class UserController implements Serializable {
     public String loginPage() {
         return "login";
     }
+    
+    public String settingsPage(){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        user = (User) facesContext.getExternalContext().getSessionMap().get("current_user");
+        
+        return "/auth/settings";
+    }
+    public String userUpdate(){
+        getUserDao().update(getUser());
+        return "/auth/settings";
+    }
 
     public User getUser() {
         return user;
