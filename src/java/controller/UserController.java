@@ -11,6 +11,7 @@ import dtos.LoginDto;
 import entity.User;
 import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 /**
@@ -49,7 +50,8 @@ public class UserController implements Serializable {
     public String login() {
         User tmp = getUserDao().login(getLoginDto().getEmail(), getLoginDto().getPassword());
         if (tmp != null) {
-            setLoginStatus("Giriş Başarılı");
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("current_user", tmp);
+            return "/auth/projects?faces-redirect=true";
         } else {
             setLoginStatus("Giriş Başarısız");
         }
