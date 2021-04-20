@@ -21,6 +21,17 @@ import java.util.List;
 public class ProjectDao extends Dao implements IProjectDao {
 
     private UserDao userDao;
+    private static ProjectDao instance = null;
+
+    private ProjectDao() {
+    }
+
+    public static ProjectDao getInstance() {
+        if (instance == null) {
+            instance = new ProjectDao();
+        }
+        return instance;
+    }
 
     @Override
     public boolean create(Project proj) {
@@ -42,7 +53,7 @@ public class ProjectDao extends Dao implements IProjectDao {
 
     @Override
     public boolean update(Project proj) {
-         String q = "update project set title=?,owner=?,goaltime=? where id=?";
+        String q = "update project set title=?,owner=?,goaltime=? where id=?";
         try {
             PreparedStatement pst = getConn().prepareStatement(q);
             pst.setString(1, proj.getTitle());
@@ -83,10 +94,10 @@ public class ProjectDao extends Dao implements IProjectDao {
             PreparedStatement pst = getConn().prepareStatement(q);
             pst.setInt(1, owner);
             ResultSet rs = pst.executeQuery();
-            while (rs.next()) {                
+            while (rs.next()) {
                 list.add(projectFromResultSet(rs));
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return list;
