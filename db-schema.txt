@@ -6,3 +6,15 @@ create table users(
 	username varchar(255) unique not null,	
 	password varchar(255) not null
 );
+
+create table project(
+	id serial primary key,
+	title varchar(255) not null,
+	owner int,
+	goaltime timestamp,
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP,
+	CONSTRAINT fk_user_id
+      	FOREIGN KEY(user_id) 
+	  REFERENCES users(id) on delete cascade
+);
