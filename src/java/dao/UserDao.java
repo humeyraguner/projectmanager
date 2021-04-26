@@ -11,6 +11,7 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -111,12 +112,33 @@ public class UserDao extends Dao implements IUserDao {
 
     @Override
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String q ="delete from users where id=?";
+        
+        try {
+            PreparedStatement pst = getConn().prepareStatement(q);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 
     @Override
     public List findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String q ="select * from users";
+        List<User> users = new ArrayList<>();
+         try {
+            PreparedStatement pst = getConn().prepareStatement(q);
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                users.add(userFromResulset(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return users;
     }
 
     private User userFromResulset(ResultSet rs) throws SQLException {
