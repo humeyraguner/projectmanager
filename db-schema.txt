@@ -3,18 +3,60 @@ create table users(
 	name varchar(255) not null,
 	surname varchar(255) not null,
 	email varchar(255) unique not null,
-	username varchar(255) unique not null,	
+	username varchar(255) unique not null,
 	password varchar(255) not null
 );
 
 create table project(
 	id serial primary key,
 	title varchar(255) not null,
+	description varchar(255) not null,
 	owner int,
-	goaltime timestamp,
+	goaltime varchar(11),
 	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP,
 	CONSTRAINT fk_user_id
-      	FOREIGN KEY(user_id) 
+      	FOREIGN KEY(owner)
 	  REFERENCES users(id) on delete cascade
+);
+
+create table work(
+	id serial primary key,
+	title varchar(255) not null,
+	project int,
+	description varchar(255) not null,
+	status smallint,
+	assigned_at int,
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP,
+	CONSTRAINT fk_project_id
+      	FOREIGN KEY(project)
+	  REFERENCES project(id) on delete cascade,
+	CONSTRAINT fk_user_id
+      	FOREIGN KEY(assigned_at)
+	  REFERENCES users(id) on delete cascade
+);
+
+create table user_works(
+    id serial primary key ,
+    user_id int,
+    work_id int,
+    CONSTRAINT fk_user_id
+      	FOREIGN KEY(user_id)
+	  REFERENCES users(id) on delete cascade,
+	  CONSTRAINT fk_work_id
+      	FOREIGN KEY(work_id)
+	  REFERENCES work(id) on delete cascade
+);
+
+create table user_projects(
+    id serial primary key ,
+    user_id int,
+    project_id int,
+    CONSTRAINT fk_user_id
+      	FOREIGN KEY(user_id)
+	  REFERENCES users(id) on delete cascade,
+	  CONSTRAINT fk_project_id
+      	FOREIGN KEY(project_id)
+	  REFERENCES project(id) on delete cascade
 );

@@ -48,6 +48,7 @@ public class UserController implements Serializable {
     }
 
     public String login() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().clear();
         User tmp = getUserDao().login(getLoginDto().getEmail(), getLoginDto().getPassword());
         if (tmp != null) {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("current_user", tmp);

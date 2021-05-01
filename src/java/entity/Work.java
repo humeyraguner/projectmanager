@@ -6,12 +6,13 @@
 
 package entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  */
-public class Work {
+public class Work implements Serializable{
     private int id;
     private String title;
     private String description;
@@ -76,6 +77,9 @@ public class Work {
     }
 
     public User getAsSignedAt() {
+        if(asSignedAt == null){
+            asSignedAt = new User();
+        }
         return asSignedAt;
     }
 

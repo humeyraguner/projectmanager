@@ -29,7 +29,7 @@ public class LoginFilter implements Filter {
         User user = (User) req.getSession().getAttribute("current_user");
         if (user == null) {
             if (url.contains("auth") || url.contains("logout")) {
-                res.sendRedirect(req.getContextPath()+ "/login.xhtml");
+                res.sendRedirect(req.getContextPath()+ "/faces/login.xhtml");
             } else {
                 chain.doFilter(request, response);
             }

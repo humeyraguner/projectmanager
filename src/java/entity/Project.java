@@ -13,14 +13,16 @@ import java.util.Date;
 public class Project {
     private int id;
     private String title;
+    private String description;
     private User owner;
-    private Date goalTime;
+    private String goalTime;
     private Date createdAt;
     private Date updateAt;
 
-    public Project(int id, String title, User owner, Date goalTime, Date createdAt, Date updateAt) {
+    public Project(int id, String title,String description, User owner, String goalTime, Date createdAt, Date updateAt) {
         this.id = id;
         this.title = title;
+        this.description = description;
         this.owner = owner;
         this.goalTime = goalTime;
         this.createdAt = createdAt;
@@ -43,6 +45,14 @@ public class Project {
         return title;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -55,11 +65,11 @@ public class Project {
         this.owner = owner;
     }
 
-    public Date getGoalTime() {
+    public String getGoalTime() {
         return goalTime;
     }
 
-    public void setGoalTime(Date goalTime) {
+    public void setGoalTime(String goalTime) {
         this.goalTime = goalTime;
     }
 

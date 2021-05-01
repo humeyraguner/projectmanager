@@ -28,6 +28,15 @@ public class ProjectController implements Serializable {
         return pdao;
     }
 
+    public String projectPage(Project project) {
+        if (project != null) {
+            this.project = project;
+        } else {
+            this.project = new Project();
+        }
+        return "project";
+    }
+
     public Project getProject() {
         if (project == null) {
             project = new Project();
@@ -39,8 +48,20 @@ public class ProjectController implements Serializable {
         this.project = project;
     }
 
-    public void createProject() {
-        getPdao().create(project);
+    public String createProject() {
+        if (project.getId() == 0) {
+            project.setOwner(user);
+            getPdao().create(project);
+        } else {
+            getPdao().update(project);
+        }
+
+        return "projects";
+    }
+
+    public String delete(int id) {
+        getPdao().delete(id);
+        return "projects";
     }
 
     public List<Project> getProjectList() {
@@ -48,7 +69,7 @@ public class ProjectController implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             user = (User) facesContext.getExternalContext().getSessionMap().get("current_user");
         }
-         projectList = getPdao().findAll(user.getId());
+        projectList = getPdao().findAll(user.getId());
         return projectList;
     }
 
