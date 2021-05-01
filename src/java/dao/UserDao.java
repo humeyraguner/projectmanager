@@ -140,6 +140,21 @@ public class UserDao extends Dao implements IUserDao {
         }
         return users;
     }
+    
+    public User userFromWorkId(int id){
+         String q = "select * from users where id = (select u.user_id from user_works u where work_id = ?)";
+        try {
+            PreparedStatement pst = getConn().prepareStatement(q);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return userFromResulset(rs);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 
     private User userFromResulset(ResultSet rs) throws SQLException {
         return new User(rs.getInt("id"), rs.getString("name"),
@@ -160,6 +175,22 @@ public class UserDao extends Dao implements IUserDao {
             System.out.println(e.getMessage());
         }
         return false;
+    }
+
+    @Override
+    public User findyByUsername(String username) {
+        String q = "select * from users where username=?";
+        try {
+            PreparedStatement pst = getConn().prepareStatement(q);
+            pst.setString(1, username);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return userFromResulset(rs);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
 }

@@ -5,10 +5,12 @@
  */
 package dtos;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class LoginDto {
+public class LoginDto implements Serializable{
 
     private String email;
     private String password;

@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +36,26 @@ public class ProjectDao extends Dao implements IProjectDao {
 
     @Override
     public boolean create(Project proj) {
-        String q = "insert into project (id,title,owner,goaltime) values (default,?,?,?)";
+        String q = "insert into project (id,title,description,owner,goaltime) values (default,?,?,?,?)";
         try {
-            PreparedStatement pst = getConn().prepareStatement(q);
+            PreparedStatement pst = getConn().prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
             pst.setString(1, proj.getTitle());
-            pst.setInt(2, proj.getOwner().getId());
-            pst.setDate(3, (Date) proj.getGoalTime());
-            ResultSet rs = pst.executeQuery();
-            pst.close();
-            return rs.next();
+            pst.setString(2, proj.getDescription());
+            pst.setInt(3, proj.getOwner().getId());
+            pst.setString(4, proj.getGoalTime());
+            pst.executeUpdate();
+            try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int projectId = (int) generatedKeys.getLong(1);
+                    String relationQuery = "insert into user_projects (id,user_id,project_id) values (default,?,?)";
+                    PreparedStatement pst2 = getConn().prepareStatement(relationQuery);
+                    pst2.setInt(1, proj.getOwner().getId());
+                    pst2.setInt(2, projectId);
+                    return pst2.execute();
+                } else {
+                    throw new SQLException("Creating failed.");
+                }
+            }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -53,13 +65,14 @@ public class ProjectDao extends Dao implements IProjectDao {
 
     @Override
     public boolean update(Project proj) {
-        String q = "update project set title=?,owner=?,goaltime=? where id=?";
+        String q = "update project set title=?,description=?,owner=?,goaltime=? where id=?";
         try {
             PreparedStatement pst = getConn().prepareStatement(q);
             pst.setString(1, proj.getTitle());
-            pst.setInt(2, proj.getOwner().getId());
-            pst.setDate(3, (Date) proj.getGoalTime());
-            pst.setInt(4, proj.getId());
+            pst.setString(2, proj.getDescription());
+            pst.setInt(3, proj.getOwner().getId());
+            pst.setString(4, proj.getGoalTime());
+            pst.setInt(5, proj.getId());
             ResultSet rs = pst.executeQuery();
             pst.close();
             return rs.next();
@@ -88,8 +101,7 @@ public class ProjectDao extends Dao implements IProjectDao {
 
     public List<Project> findAll(int owner) {
         List<Project> list = new ArrayList<>();
-        String q = "select * from project where owner=?";
-
+        String q = "select * from project p where p.id in (select project_id from user_projects where user_id=?)";
         try {
             PreparedStatement pst = getConn().prepareStatement(q);
             pst.setInt(1, owner);
@@ -124,7 +136,7 @@ public class ProjectDao extends Dao implements IProjectDao {
 
     private Project projectFromResultSet(ResultSet rs) throws SQLException {
         User temp = getUserDao().findById(rs.getInt("owner"));
-        return new Project(rs.getInt("id"), rs.getString("title"), temp, rs.getDate("goaltime"), rs.getDate("created_at"), rs.getDate("updated_at"));
+        return new Project(rs.getInt("id"), rs.getString("title"), rs.getString("description"), temp, rs.getString("goaltime"), rs.getDate("created_at"), rs.getDate("updated_at"));
     }
 
     public UserDao getUserDao() {

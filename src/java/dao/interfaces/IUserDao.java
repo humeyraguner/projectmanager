@@ -14,5 +14,6 @@ import entity.User;
 public interface IUserDao extends IDao<User>{
     User login(String email,String password);
     boolean checkByUsernameOrEmail(String username);
+    User findyByUsername(String username);
 
 }
